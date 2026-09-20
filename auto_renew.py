@@ -43,7 +43,7 @@ def add_cookies(driver):
             'domain': '.tickhosting.com'
         },
         {
-            'name': 'pterodactyl_session',
+            'name': 'pterodactyl_panel_session',
             'value': os.environ['PTERODACTYL_SESSION'],
             'domain': '.tickhosting.com'
         }
@@ -107,21 +107,39 @@ def login_to_dashboard(driver):
         
         # try different email and password input selectors
         email_selectors = [
-            (By.NAME, 'username'),  
-            (By.ID, 'email'),
             (By.NAME, 'email'),
+            (By.NAME, 'username'),
+            (By.ID, 'email'),
+            (By.ID, 'username'),
+            (By.CSS_SELECTOR, "input[type='email']"),
+            (By.CSS_SELECTOR, "input[name='email']"),
+            (By.CSS_SELECTOR, "input[name='username']"),
+            (By.CSS_SELECTOR, "input[autocomplete='email']"),
+            (By.CSS_SELECTOR, "input[autocomplete='username']"),
             (By.XPATH, "//input[@type='email']"),
+            (By.XPATH, "//input[@type='text']"),
+            (By.XPATH, "//input[contains(@placeholder, 'mail')]"),
+            (By.XPATH, "//input[contains(@placeholder, 'Mail')]"),
+            (By.XPATH, "//input[contains(@placeholder, 'usuario')]"),
+            (By.XPATH, "//input[contains(@placeholder, 'Usuario')]"),
         ]
         
         password_selectors = [
-            (By.NAME, 'password'),  
+            (By.NAME, 'password'),
             (By.ID, 'password'),
+            (By.CSS_SELECTOR, "input[type='password']"),
+            (By.CSS_SELECTOR, "input[name='password']"),
+            (By.CSS_SELECTOR, "input[autocomplete='current-password']"),
             (By.XPATH, "//input[@type='password']"),
         ]
         
         login_button_selectors = [
             (By.XPATH, "//button[@type='submit']"),
             (By.XPATH, "//button[contains(text(), 'Login')]"),
+            (By.XPATH, "//button[contains(text(), 'Log in')]"),
+            (By.XPATH, "//button[contains(text(), 'Iniciar')]"),
+            (By.XPATH, "//button[contains(text(), 'Entrar')]"),
+            (By.CSS_SELECTOR, "button[type='submit']"),
         ]
         
         # find the email and password input fields
