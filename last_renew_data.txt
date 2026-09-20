@@ -1,4 +1,4 @@
 Server ID: Unknown
 Renew status: Failed
-Last renewal time: 2026-09-20 02:09:02
+Last renewal time: 2026-09-20 02:17:06
 Error: An error occurred: Cookie login failed: Cookie login failed. Check PTERODACTYL_SESSION secret.
