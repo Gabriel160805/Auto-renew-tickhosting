@@ -91,129 +91,10 @@ def login_to_dashboard(driver):
                 print(f"Failed to navigate to {url}: {e}")
         
         print("Cookie login failed to reach dashboard.")
+        raise Exception("Cookie login failed. Check PTERODACTYL_SESSION secret.")
     except Exception as e:
         print(f"Cookie login error: {str(e)}")
-    
-    # if cookie login fails, try email and password
-    try:
-        if not EMAIL or not PASSWORD:
-            raise ValueError("Email or password not set in environment variables")
-        
-        print("Attempting to login with email and password...")
-        driver.get('https://tickhosting.com/auth/login')
-        
-        # wait for the login page to load
-        time.sleep(8)
-        
-        # try different email and password input selectors
-        email_selectors = [
-            (By.NAME, 'email'),
-            (By.NAME, 'username'),
-            (By.ID, 'email'),
-            (By.ID, 'username'),
-            (By.CSS_SELECTOR, "input[type='email']"),
-            (By.CSS_SELECTOR, "input[name='email']"),
-            (By.CSS_SELECTOR, "input[name='username']"),
-            (By.CSS_SELECTOR, "input[autocomplete='email']"),
-            (By.CSS_SELECTOR, "input[autocomplete='username']"),
-            (By.XPATH, "//input[@type='email']"),
-            (By.XPATH, "//input[@type='text']"),
-            (By.XPATH, "//input[contains(@placeholder, 'mail')]"),
-            (By.XPATH, "//input[contains(@placeholder, 'Mail')]"),
-            (By.XPATH, "//input[contains(@placeholder, 'usuario')]"),
-            (By.XPATH, "//input[contains(@placeholder, 'Usuario')]"),
-        ]
-        
-        password_selectors = [
-            (By.NAME, 'password'),
-            (By.ID, 'password'),
-            (By.CSS_SELECTOR, "input[type='password']"),
-            (By.CSS_SELECTOR, "input[name='password']"),
-            (By.CSS_SELECTOR, "input[autocomplete='current-password']"),
-            (By.XPATH, "//input[@type='password']"),
-        ]
-        
-        login_button_selectors = [
-            (By.XPATH, "//button[@type='submit']"),
-            (By.XPATH, "//button[contains(text(), 'Login')]"),
-            (By.XPATH, "//button[contains(text(), 'Log in')]"),
-            (By.XPATH, "//button[contains(text(), 'Iniciar')]"),
-            (By.XPATH, "//button[contains(text(), 'Entrar')]"),
-            (By.CSS_SELECTOR, "button[type='submit']"),
-        ]
-        
-        # find the email and password input fields
-        email_input = None
-        for selector in email_selectors:
-            try:
-                email_input = driver.find_element(*selector)
-                print(f"Found email input with selector: {selector}")
-                break
-            except Exception as e:
-                print(f"Failed to find email input with selector {selector}: {e}")
-        
-        if not email_input:
-            raise Exception("Could not find email input field")
-        
-        password_input = None
-        for selector in password_selectors:
-            try:
-                password_input = driver.find_element(*selector)
-                print(f"Found password input with selector: {selector}")
-                break
-            except Exception as e:
-                print(f"Failed to find password input with selector {selector}: {e}")
-        
-        if not password_input:
-            raise Exception("Could not find password input field")
-        
-        login_button = None
-        for selector in login_button_selectors:
-            try:
-                login_button = driver.find_element(*selector)
-                print(f"Found login button with selector: {selector}")
-                break
-            except Exception as e:
-                print(f"Failed to find login button with selector {selector}: {e}")
-        
-        if not login_button:
-            raise Exception("Could not find login button")
-        
-        email_input.clear()
-        email_input.send_keys(EMAIL)
-        password_input.clear()
-        password_input.send_keys(PASSWORD)
-        
-        login_button.click()
-        
-        time.sleep(10)
-        
-        dashboard_urls = [
-            'https://tickhosting.com'
-        ]
-        
-        for url in dashboard_urls:
-            try:
-                print(f"Attempting to navigate to: {url}")
-                driver.get(url)
-                time.sleep(5)
-                
-                print(f"Current URL after email login: {driver.current_url}")
-                print(f"Current page title: {driver.title}")
-                
-                if driver.current_url.startswith('https://tickhosting.com') and 'Dashboard' in driver.title:
-                    print("Email/password login successful!")
-                    return True
-            except Exception as e:
-                print(f"Failed to navigate to {url}: {e}")
-        
-        raise Exception("Login did not reach dashboard")
-    
-    except Exception as e:
-        print(f"Login failed: {str(e)}")
-        # 发送 Telegram 通知
-        send_telegram_message(f"Auto Renew Login Error: {str(e)}")
-        return False
+        raise Exception(f"Cookie login failed: {str(e)}")
 
 def try_login(driver):
     try:
@@ -234,41 +115,6 @@ def try_login(driver):
         
     except Exception as e:
         print(f"Error during login attempt: {str(e)}")
-        return False
-
-def login_with_credentials(driver):
-    try:
-        # get the login page
-        driver.get('https://tickhosting.com/auth/login')
-        
-        # wait for the login page to load
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.NAME, 'email'))
-        )
-        
-        # Locate the mailbox and password input box
-        email_input = driver.find_element(By.NAME, 'email')
-        password_input = driver.find_element(By.NAME, 'password')
-        
-        email_input.clear()
-        email_input.send_keys(EMAIL)
-        password_input.clear()
-        password_input.send_keys(PASSWORD)
-        
-        # Locate and click the login button
-        login_button = driver.find_element(By.XPATH, "//button[contains(text(), 'Login') or contains(text(), '登录')]")
-        login_button.click()
-        
-        # wait for login to complete
-        WebDriverWait(driver, 10).until(
-            EC.url_contains('dashboard')
-        )
-        
-        print("Login successful!")
-        return True
-    
-    except Exception as e:
-        print(f"Login failed: {str(e)}")
         return False
 
 def wait_and_find_element(driver, by, value, timeout=20, description=""):
